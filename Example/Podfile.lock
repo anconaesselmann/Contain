@@ -1,0 +1,16 @@
+PODS:
+  - Contain (0.1.0)
+
+DEPENDENCIES:
+  - Contain (from `../`)
+
+EXTERNAL SOURCES:
+  Contain:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Contain: 5311f05aaef1f3a6a4cf4eea26328ddbe88a05d1
+
+PODFILE CHECKSUM: 4d415b416032058132d47664993ef13dd9e4dd48
+
+COCOAPODS: 1.7.5

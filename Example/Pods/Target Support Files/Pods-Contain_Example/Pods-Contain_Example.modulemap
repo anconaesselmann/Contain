@@ -1,0 +1,6 @@
+framework module Pods_Contain_Example {
+  umbrella header "Pods-Contain_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

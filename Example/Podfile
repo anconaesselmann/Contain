@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'Contain_Example' do
+  pod 'Contain', :path => '../'
+
+  target 'Contain_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

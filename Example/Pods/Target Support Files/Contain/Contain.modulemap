@@ -1,0 +1,6 @@
+framework module Contain {
+  umbrella header "Contain-umbrella.h"
+
+  export *
+  module * { export * }
+}
