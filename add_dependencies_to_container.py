@@ -36,6 +36,30 @@ jsonArray = json.load(includeFile)
 
 
 containerFileDir = join(projectDir, projectName, dependencyInjectionDirName, 'Container.swift')
+consumersFileDir = join(projectDir, projectName, dependencyInjectionDirName, 'Consumers.swift')
+
+if not path.exists(consumersFileDir):
+    with open(consumersFileDir,"w+") as consumerFile:
+        consumerFile.write("// Create consumer protocols here")
+
+consumersContent = ""
+with open(consumersFileDir, 'r') as consuersFile:
+    consumersContent = consuersFile.read()
+
+dependenciesFromConsumers = re.findall(r'(?<=protocol\s)([A-Za-z0-9\-_]+)(?:Consumer)', consumersContent)
+
+dependencyTemplate = ""
+with open(dependencyTemplateDir, 'r') as dependencyTemplateFile:
+    dependencyTemplate = dependencyTemplateFile.read()
+
+dependenciesToGenerate = []
+for dependency in dependenciesFromConsumers:
+    dependencyDir = join(dependenciesDir, dependency + "Dependency.swift")
+    if not path.exists(dependencyDir):
+        with open(dependencyDir,"w+") as dependencyFile:
+            dependencyContent = dependencyTemplate.replace("{class_name}", dependency).replace("{property_name}", dependency[0].lower() + dependency[1:])
+            dependencyFile.write(dependencyContent)
+
 
 if not path.exists(containerFileDir):
     template = ""
