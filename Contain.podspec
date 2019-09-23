@@ -32,4 +32,10 @@ Experimental dependency injection container.
   #   'Contain' => ['Contain/Assets/*.png']
   # }
 
+  s.script_phases = [
+    { :name => 'Add dependencies to container',
+      :script => 'python "${PODS_TARGET_SRCROOT}/add_dependencies_to_container.py" "$PROJECT_DIR"',
+      :execution_position => :before_compile
+    }
+  ]
 end
