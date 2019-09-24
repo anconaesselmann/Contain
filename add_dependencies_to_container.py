@@ -24,16 +24,25 @@ dependencyTemplateDir = join(podDir, "DependencyTemplate.swift")
 
 dependencyInjectionDirName = 'DependencyInjection'
 
+inProjectContainDir = includeDir = join(projectDir, "Contain")
 includeDir = join(projectDir, "Contain", "contain.json")
 projectName = basename(projectDir)
 dependenciesDir = join(projectDir, projectName, dependencyInjectionDirName, 'Dependencies')
 
+xcodeProjDir = join(projectDir, projectName + ".xcodeproj")
+
 if not os.path.exists(dependenciesDir):
     os.makedirs(dependenciesDir)
 
+
+if not path.exists(includeDir):
+    os.makedirs(inProjectContainDir)
+    with open(includeDir,"w+") as includeFile:
+        includeFile.write("[]")
+
 includeFile = open(includeDir)
 jsonArray = json.load(includeFile)
-
+includeFile.close()
 
 containerFileDir = join(projectDir, projectName, dependencyInjectionDirName, 'Container.swift')
 consumersFileDir = join(projectDir, projectName, dependencyInjectionDirName, 'Consumers.swift')
@@ -41,6 +50,9 @@ consumersFileDir = join(projectDir, projectName, dependencyInjectionDirName, 'Co
 if not path.exists(consumersFileDir):
     with open(consumersFileDir,"w+") as consumerFile:
         consumerFile.write("// Create consumer protocols here")
+
+        command = '"' + podDir + '/add_file_to_xcode_proj.rb" "' + consumersFileDir + '" "' + xcodeProjDir + '" "DependencyInjection"'
+        os.system(command)
 
 consumersContent = ""
 with open(consumersFileDir, 'r') as consuersFile:
@@ -52,7 +64,6 @@ dependencyTemplate = ""
 with open(dependencyTemplateDir, 'r') as dependencyTemplateFile:
     dependencyTemplate = dependencyTemplateFile.read()
 
-dependenciesToGenerate = []
 for dependency in dependenciesFromConsumers:
     dependencyDir = join(dependenciesDir, dependency + "Dependency.swift")
     if not path.exists(dependencyDir):
@@ -60,6 +71,11 @@ for dependency in dependenciesFromConsumers:
             dependencyContent = dependencyTemplate.replace("{class_name}", dependency).replace("{property_name}", dependency[0].lower() + dependency[1:])
             dependencyFile.write(dependencyContent)
 
+# adding file to xcode
+for dependency in dependenciesFromConsumers:
+    dependencyDir = join(dependenciesDir, dependency + "Dependency.swift")
+    command = '"' + podDir + '/add_file_to_xcode_proj.rb" "' + dependencyDir + '" "' + xcodeProjDir + '" "DependencyInjection/Dependencies"'
+    os.system(command)
 
 if not path.exists(containerFileDir):
     template = ""
@@ -73,6 +89,9 @@ if not path.exists(containerFileDir):
 
     with open(containerFileDir,"w+") as containerFile:
         containerFile.write(importString + template)
+
+command = '"' + podDir + '/add_file_to_xcode_proj.rb" "' + containerFileDir + '" "' + xcodeProjDir + '" "DependencyInjection"'
+os.system(command)
 
 # Todo: add imports for dependencies that were added after container file creation
 
