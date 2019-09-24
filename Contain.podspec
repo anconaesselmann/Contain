@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Contain'
-  s.version          = '0.2.6'
+  s.version          = '0.2.7'
   s.summary          = 'Dependency injection container.'
   s.swift_version    = '5.0'
 
@@ -19,7 +19,7 @@ Experimental dependency injection container.
   s.source_files = 'Contain/Classes/**/*'
 
   s.resource_bundles = {
-    'Contain' => ['Contain/Assets/*.py', 'Contain/Assets/*.rb', 'Contain/Assets/*.swift']
+    'Contain' => ['Contain/Assets/*.py', 'Contain/Assets/*.rb', 'Contain/Assets/*.template']
   }
 
   s.script_phases = [
