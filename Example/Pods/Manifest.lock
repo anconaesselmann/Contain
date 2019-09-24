@@ -1,5 +1,5 @@
 PODS:
-  - Contain (0.1.0)
+  - Contain (0.2.0)
 
 DEPENDENCIES:
   - Contain (from `../`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Contain: 5311f05aaef1f3a6a4cf4eea26328ddbe88a05d1
+  Contain: eff77beb7a6fc5c41a17a371f7cdc183d24c5c13
 
 PODFILE CHECKSUM: 4d415b416032058132d47664993ef13dd9e4dd48
 
