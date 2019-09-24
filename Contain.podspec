@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Contain'
-  s.version          = '0.2.5'
+  s.version          = '0.2.6'
   s.summary          = 'Dependency injection container.'
   s.swift_version    = '5.0'
 

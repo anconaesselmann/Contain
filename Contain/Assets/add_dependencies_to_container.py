@@ -19,8 +19,8 @@ else:
 
 podDir = dirname(__file__)
 
-containerTemplateDir = join(podDir, "ContainerTemplate.swift")
-dependencyTemplateDir = join(podDir, "DependencyTemplate.swift")
+containerTemplateDir = join(podDir, "Container.template")
+dependencyTemplateDir = join(podDir, "Dependency.template")
 
 dependencyInjectionDirName = 'DependencyInjection'
 
