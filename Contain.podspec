@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Contain'
-  s.version          = '0.2.2'
+  s.version          = '0.2.3'
   s.summary          = 'Dependency injection container.'
   s.swift_version    = '5.0'
 
@@ -22,10 +22,10 @@ Experimental dependency injection container.
   #   'Contain' => ['Contain/Assets/*.py', 'Contain/Assets/*.rb', 'Contain/Assets/*.swift']
   # }
 
-  s.script_phases = [
-    { :name => 'Add dependencies to container',
-      :script => 'python "${PODS_TARGET_SRCROOT}/Contain/Assets/add_dependencies_to_container.py" "$PROJECT_DIR"',
-      :execution_position => :before_compile
-    }
-  ]
+  # s.script_phases = [
+  #   { :name => 'Add dependencies to container',
+  #     :script => 'python "${PODS_TARGET_SRCROOT}/Contain/Assets/add_dependencies_to_container.py" "$PROJECT_DIR"',
+  #     :execution_position => :before_compile
+  #   }
+  # ]
 end
