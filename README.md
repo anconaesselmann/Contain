@@ -1,6 +1,6 @@
 # Contain
 
-Contain is a lightweight dependency injection framework for IOS projects. It is written is swift.
+### Contain is a lightweight dependency injection framework for IOS projects. It is written is swift.
 
 ## Installation
 
@@ -11,11 +11,7 @@ it, simply add the following line to your Podfile:
 pod 'Contain'
 ```
 
-- Add a Run Script build phase that executes
-```ruby
-"${PODS_ROOT}/Contain/Contain/Assets/add_dependencies_to_container.py" "$PROJECT_DIR/${TARGET_NAME}"
-```
-and make sure the script gets run before compilation (drag it to change it's position)
+## How to use Contain
 
 Create a container instance inside your AppDelegate:
 ```ruby
@@ -38,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 When working without storyboards inject the container into the root view controller and pass it along from there.
 
 
-When working with storyboards, access the container on the `AppDelegate` inside the applications first screen:
+When working with storyboards, access the container on the `AppDelegate` inside the application's first screen:
 
 ```ruby
 guard let container = (UIApplication.shared.delegate as? AppDelegate)?.container else {
