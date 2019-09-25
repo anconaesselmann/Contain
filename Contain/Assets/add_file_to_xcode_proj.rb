@@ -2,44 +2,61 @@
 
 require 'xcodeproj'
 
-fileDirString = ARGV[0]
+fileDirStrings = ARGV[0]
 projectDir = ARGV[1]
-projectGroup = ARGV[2]
+projectGroupsString = ARGV[2]
 
-project = Xcodeproj::Project.open(projectDir)
+fileDirs = fileDirStrings.split(",")
+projectGroups = projectGroupsString.split(",")
 
-currentGroup = project.groups[0]
+xcodeElements = fileDirs.zip(projectGroups)
 
-projectGroup.split("/").each do |groupName|
-    groupExists = false
+def add_file_to_group(project, fileDirString, projectGroup)
+    changeMade = false
+    currentGroup = project.groups[0]
+
+    projectGroup.split("/").each do |groupName|
+        groupExists = false
+        currentGroup.children.each do |item|
+            if item.name == groupName
+                currentGroup = item
+                groupExists = true
+                break
+            end
+        end
+        if not groupExists
+            currentGroup = currentGroup.new_group(groupName)
+            changeMade = true
+        end
+    end
+
+    fileExists = false
+
+    fileDir = File.realdirpath(fileDirString)
     currentGroup.children.each do |item|
-        if item.name == groupName
-            currentGroup = item
-            groupExists = true
+        if File.realdirpath(item.real_path) == fileDir
+            fileExists = true
             break
         end
     end
-    if not groupExists
-        # puts "Creating group " + groupName
-        currentGroup = currentGroup.new_group(groupName)
-        project.save(projectDir)
+    if not fileExists
+        i = currentGroup.new_file(fileDir)
+        project.targets.first.add_file_references([i])
+        changeMade = true
+    end
+    return changeMade
+end
+
+project = Xcodeproj::Project.open(projectDir)
+
+projectShouldSave = false
+xcodeElements.each do |dir, group|
+    if add_file_to_group(project, dir, group)
+        projectShouldSave = true
     end
 end
 
-fileExists = false
-
-fileDir = File.realdirpath(fileDirString)
-currentGroup.children.each do |item|
-    # puts item.real_path
-    if File.realdirpath(item.real_path) == fileDir
-        fileExists = true
-        break
-    end
-end
-if not fileExists
-    # puts "Creating file" + fileDir
-    i = currentGroup.new_file(fileDir)
-    project.targets.first.add_file_references([i])
-
+if projectShouldSave
     project.save(projectDir)
 end
+

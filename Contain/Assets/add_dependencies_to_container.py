@@ -16,7 +16,6 @@ if len(sys.argv) > 1:
 else:
     print("Error: Project dir has to be passed into " + __file__)
 
-
 podDir = dirname(__file__)
 
 containerTemplateDir = join(podDir, "Container.template")
@@ -37,7 +36,7 @@ if not os.path.exists(dependenciesDir):
 
 if not path.exists(includeDir):
     os.makedirs(inProjectContainDir)
-    with open(includeDir,"w+") as includeFile:
+    with open(includeDir, "w+") as includeFile:
         includeFile.write("[]")
 
 includeFile = open(includeDir)
@@ -47,12 +46,20 @@ includeFile.close()
 containerFileDir = join(projectDir, projectName, dependencyInjectionDirName, 'Container.swift')
 consumersFileDir = join(projectDir, projectName, dependencyInjectionDirName, 'Consumers.swift')
 
-if not path.exists(consumersFileDir):
-    with open(consumersFileDir,"w+") as consumerFile:
-        consumerFile.write("// Create consumer protocols here")
+xcodeReferences = []
 
-        command = '"' + podDir + '/add_file_to_xcode_proj.rb" "' + consumersFileDir + '" "' + xcodeProjDir + '" "DependencyInjection"'
-        os.system(command)
+dependencyInjectionGroupName = 'DependencyInjection'
+dependenciesGroupName = 'DependencyInjection/Dependencies'
+
+class XcodeReference:
+    def __init__(self, fileDir, group):
+        self.fileDir = fileDir
+        self.group = group
+
+if not path.exists(consumersFileDir):
+    with open(consumersFileDir, "w+") as consumerFile:
+        consumerFile.write("// Create consumer protocols here")
+        xcodeReferences.append(XcodeReference(consumersFileDir, dependencyInjectionGroupName))
 
 consumersContent = ""
 with open(consumersFileDir, 'r') as consuersFile:
@@ -67,15 +74,14 @@ with open(dependencyTemplateDir, 'r') as dependencyTemplateFile:
 for dependency in dependenciesFromConsumers:
     dependencyDir = join(dependenciesDir, dependency + "Dependency.swift")
     if not path.exists(dependencyDir):
-        with open(dependencyDir,"w+") as dependencyFile:
+        with open(dependencyDir, "w+") as dependencyFile:
             dependencyContent = dependencyTemplate.replace("{class_name}", dependency).replace("{property_name}", dependency[0].lower() + dependency[1:])
             dependencyFile.write(dependencyContent)
 
 # adding file to xcode
 for dependency in dependenciesFromConsumers:
     dependencyDir = join(dependenciesDir, dependency + "Dependency.swift")
-    command = '"' + podDir + '/add_file_to_xcode_proj.rb" "' + dependencyDir + '" "' + xcodeProjDir + '" "DependencyInjection/Dependencies"'
-    os.system(command)
+    xcodeReferences.append(XcodeReference(dependencyDir, dependenciesGroupName))
 
 if not path.exists(containerFileDir):
     template = ""
@@ -87,11 +93,10 @@ if not path.exists(containerFileDir):
 
     importString = "import " + "\nimport ".join(imports) + "\n"
 
-    with open(containerFileDir,"w+") as containerFile:
+    with open(containerFileDir, "w+") as containerFile:
         containerFile.write(importString + template)
 
-command = '"' + podDir + '/add_file_to_xcode_proj.rb" "' + containerFileDir + '" "' + xcodeProjDir + '" "DependencyInjection"'
-os.system(command)
+xcodeReferences.append(XcodeReference(containerFileDir, dependencyInjectionGroupName))
 
 # Todo: add imports for dependencies that were added after container file creation
 
@@ -103,8 +108,28 @@ files = glob(dependenciesDir + "/*.swift")
 dependencies = map(lambda item: next(reversed(item.split(":"))) + ".self", jsonArray)
 dependencies += map(lambda dir: basename(dir).decode('utf-8').replace('.swift', '.self'), files)
 
-string = ',\n\t\t\t'.encode("utf-8").join(dependencies).encode('ascii','ignore')
+string = ',\n\t\t\t'.encode("utf-8").join(dependencies).encode('ascii', 'ignore')
 content_new = re.sub(r'codeGenDependencyTypes\(\)\s+->\s+\[Dependency\.Type\]\s+\{\s+return(\s+\[\s+[A-Za-z0-9\.,\w\n\s]+?\])', 'codeGenDependencyTypes() -> [Dependency.Type] {\n\t\treturn [\n\t\t\t' + string + "\n\t\t]", content, flags=re.MULTILINE)
 
-with open(containerFileDir,"w+") as containerFile:
+with open(containerFileDir, "w+") as containerFile:
     containerFile.write(content_new)
+
+fileDirs = []
+proups = []
+
+for xcodeReference in xcodeReferences:
+    fileDirs.append('"' + xcodeReference.fileDir + '"')
+    proups.append('"' + xcodeReference.group + '"')
+
+fileDirsString = ','.join(fileDirs)
+groupString = ','.join(proups)
+
+command = '"' + podDir + '/add_file_to_xcode_proj.rb" ' + fileDirsString + ' "' + xcodeProjDir + '" ' + groupString
+os.system(command)
+
+# tempContent = ""
+# tempContent += command + "\n"
+
+# tempFileDir = join(podDir, "temp.txt")
+# with open(tempFileDir, "w+") as tempFile:
+#     tempFile.write(tempContent)
