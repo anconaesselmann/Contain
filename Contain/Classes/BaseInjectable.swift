@@ -12,6 +12,10 @@ public protocol Injectable {
     init(container: ContainerProtocol)
 }
 
+public protocol FailableInjectable {
+    init?(failableWithContainer container: ContainerProtocol)
+}
+
 open class BaseInjectable: Injectable {
     public let container: ContainerProtocol
 
