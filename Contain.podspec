@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Contain'
-  s.version          = '0.3.3'
+  s.version          = '0.3.4'
   s.summary          = 'Dependency injection container.'
   s.swift_version    = '5.0'
 
@@ -14,7 +14,7 @@ Experimental dependency injection container.
   s.source           = { :git => 'https://github.com/anconaesselmann/Contain.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '10.0'
-  # s.watchos.deployment_target = '3.0'
+  s.watchos.deployment_target = '3.0'
 
   s.source_files = 'Contain/Classes/**/*'
 
